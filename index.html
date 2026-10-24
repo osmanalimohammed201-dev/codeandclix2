@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>CODE AND CLIX | Digital Product Agency</title>
+    <meta name="description"
+        content="Code and Clix is a premier digital product agency engineering high-performance web applications, immersive 3D experiences, and conversion-optimized software.">
+
+    <!-- Fonts: Plus Jakarta Sans & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#C77D62',
+            black: '#111111',
+            white: '#FFFFFF',
+            beige: '#D8B9A8',
+            muted: '#111111',
+                        'brand-glow': '#C77D62',
+                        surface: {
+                            DEFAULT: '#FFFFFF',
+                            light: '#E8E3DC',
+                        },
+                        lightbg: {
+                            DEFAULT: '#FFFFFF',
+                            card: '#FFFFFF',
+                            border: '#E8E3DC',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'SF Pro Display', '-apple-system', 'sans-serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* Premium hardware-accelerated canvas styling */
+        #hero-canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            will-change: transform;
+        }
+
+        /* Subtle grain texture */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 35;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Glass card - Dark Mode */
+        .dark .glass-card {
+            background: rgba(232, 227, 220, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(216, 185, 168, 0.65);
+            box-shadow: 0 20px 40px -15px rgba(17, 17, 17, 0.08);
+        }
+
+        .dark .glass-card:hover {
+            border-color: rgba(199, 125, 98, 0.45);
+            box-shadow: 0 20px 50px -10px rgba(199, 125, 98, 0.2);
+        }
+
+        /* Typography blending */
+        .hero-title-blend {
+            font-size: clamp(2.5rem, 6.2vw, 6.5rem);
+            letter-spacing: -0.04em;
+        }
+
+        /* Scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    
+    :root { color-scheme: light; background: #FFFFFF; }
+    body { background-color: #FFFFFF; color: #111111; }
+    
+    ::selection { background: #C77D62; color: #111111; }
+    :focus-visible { outline: 2px solid #C77D62; outline-offset: 4px; }
+  
+    .text-muted { color: rgb(17 17 17 / 0.65); }
+    .glass-card { background: rgb(232 227 220 / 0.72); }
+    a.bg-brand, button.bg-brand { color: #111111; }
+    ::selection { background: #D8B9A8; color: #111111; }
+  </style>
+</head>
+
+<body
+    class="bg-white text-black font-sans antialiased selection:bg-brand selection:text-black relative overflow-x-hidden transition-colors duration-300">
+
+    <!-- Grain Texture Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Loading Screen Indicator -->
+    <div id="loader-overlay"
+        class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="w-16 h-16 relative flex items-center justify-center mb-6">
+            <div class="absolute inset-0 rounded-2xl border border-brand/30 animate-ping"></div>
+            <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand to-brand flex items-center justify-center shadow-lg shadow-brand/40 font-black text-black tracking-tighter text-xl">
+                C&C
+            </div>
+        </div>
+        <div class="text-xs uppercase tracking-[0.3em] text-muted font-mono mb-2">Initializing
+            Experience</div>
+        <div class="text-3xl font-extrabold font-mono tracking-tight text-black mb-6"
+            id="loader-percentage">0%</div>
+        <div
+            class="w-64 h-1.5 bg-surface-light rounded-full overflow-hidden p-0.5 border border-surface-light">
+            <div id="loader-progress-bar"
+                class="h-full bg-gradient-to-r from-brand to-brand rounded-full w-0 transition-all duration-150">
+            </div>
+        </div>
+        <p class="text-muted text-xs mt-4 font-mono">Preloading 192 high-fidelity render
+            frames...</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header
+        class="fixed top-0 left-0 right-0 z-40 px-6 py-4 transition-all duration-300 backdrop-blur-md bg-white/60 border-b border-beige/5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#hero-container" class="flex items-center gap-3 group">
+                <div
+                    class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand to-brand flex items-center justify-center font-black text-black tracking-tighter text-sm shadow-md shadow-brand/30 group-hover:scale-105 transition-transform">
+                    CC
+                </div>
+                <span
+                    class="font-extrabold tracking-tight text-lg text-black group-hover:text-brand transition-colors">
+                    Code <span class="text-brand">&</span> Clix
+                </span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
+                <a href="#services" class="hover:text-black transition-colors">Services</a>
+                <a href="#work" class="hover:text-black transition-colors">Selected Work</a>
+                <a href="#stats" class="hover:text-black transition-colors">Metrics</a>
+                <a href="#contact" class="hover:text-black transition-colors">Agency</a>
+            </nav>
+
+            <!-- Right Action Area -->
+            <div class="flex items-center gap-3">
+                <!-- Status Pill -->
+                <span
+                    class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-mono font-medium">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span> Available Q2/Q3
+                </span>
+
+                <!-- Dark / Light Mode Toggle Button -->
+
+                <!-- CTA Button -->
+                <a href="#contact"
+                    class="px-5 py-2.5 rounded-full bg-brand text-black text-xs md:text-sm font-bold tracking-wide hover:bg-brand-glow transition-all duration-300 shadow-md shadow-brand/20 hover:shadow-brand/40 hover:scale-[1.02] active:scale-95">
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- 3D APPLE-STYLE SCROLL SEQUENCE CONTAINER (192 FRAMES)    -->
+    <!-- ======================================================== -->
+    <div id="hero-container" class="relative w-full">
+
+        <!-- Sticky Canvas Viewport (Fixed while scrolling timeline) -->
+        <div
+            class="sticky top-0 left-0 w-full h-screen z-10 overflow-hidden flex items-center justify-center pointer-events-none">
+
+            <!-- Sequence Canvas: High DPI & No Blur -->
+            <canvas id="hero-canvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+            <!-- Vignettes for depth and cinematic contrast -->
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-white/60 pointer-events-none">
+            </div>
+
+            <!-- Scroll Prompt Badge -->
+            <div id="scroll-prompt"
+                class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto transition-opacity duration-500">
+                <span
+                    class="text-[11px] font-mono tracking-[0.25em] text-muted uppercase font-semibold">Scroll
+                    to Explore</span>
+                <div
+                    class="w-5 h-9 rounded-full border-2 border-beige/20 flex items-start justify-center p-1">
+                    <div class="w-1.5 h-2 rounded-full bg-brand animate-bounce"></div>
+                </div>
+            </div>
+
+            <!-- Dynamic Frame Overlay Typography (Synced to frame progression) -->
+            <div
+                class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center z-20 pointer-events-none">
+
+                <!-- Text 1 (Frames 5 - 35) -->
+                <div id="text-block-1"
+                    class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+                    <span
+                        class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-bold mb-3">Code
+                        and Clix Agency</span>
+                    <h1
+                        class="hero-title-blend font-extrabold text-black leading-none max-w-5xl drop-shadow-sm">
+                        We Build Digital Experiences
+                    </h1>
+                    <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+                        Engineering next-generation web platforms, immersive 3D interfaces, and high-conversion
+                        software.
+                    </p>
+                </div>
+
+                <!-- Text 2 (Frames 50 - 80) -->
+                <div id="text-block-2"
+                    class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+                    <span
+                        class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-bold mb-3">Precision
+                        Engineering</span>
+                    <h2
+                        class="hero-title-blend font-extrabold text-black leading-none max-w-5xl drop-shadow-sm">
+                        Code That Converts
+                    </h2>
+                    <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+                        Architected for blazing speed, search authority, and rock-solid scalability.
+                    </p>
+                </div>
+
+                <!-- Text 3 (Frames 100 - 130) -->
+                <div id="text-block-3"
+                    class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+                    <span
+                        class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-bold mb-3">Behavioral
+                        Aesthetics</span>
+                    <h2
+                        class="hero-title-blend font-extrabold text-black leading-none max-w-5xl drop-shadow-sm">
+                        Clix That Click
+                    </h2>
+                    <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+                        Intuitive interaction design crafted to turn casual visitors into loyal brand advocates.
+                    </p>
+                </div>
+
+                <!-- Text 4 / CTA (Frames 155 - 191) -->
+                <div id="text-block-4"
+                    class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform pointer-events-auto">
+                    <span
+                        class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-bold mb-4">Ready
+                        To Elevate?</span>
+                    <h2
+                        class="hero-title-blend font-extrabold text-black leading-none max-w-5xl mb-8 drop-shadow-sm">
+                        Create The Future
+                    </h2>
+                    <a href="#contact"
+                        class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-brand hover:bg-brand-glow text-black text-base md:text-lg font-bold shadow-2xl shadow-brand/40 hover:shadow-brand/60 hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>Start Your Project</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1.5 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Live Frame Counter & Scrub Indicator -->
+            <div
+                class="absolute bottom-6 right-8 hidden md:flex items-center gap-3 font-mono text-[11px] text-muted z-30">
+                <span>FRAME</span>
+                <span id="frame-counter" class="text-brand font-bold w-9">001</span>
+                <div class="w-24 h-1.5 bg-surface-light rounded-full overflow-hidden">
+                    <div id="frame-progress" class="h-full bg-brand w-0 transition-all duration-75"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Scroll Timeline Spacer (400vh for fluid Apple-grade scrubbing) -->
+        <div id="hero-spacer" class="h-[400vh] w-full pointer-events-none"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: CAPABILITIES / SERVICES                        -->
+    <!-- ======================================================== -->
+    <section id="services"
+        class="relative z-30 py-32 px-6 max-w-7xl mx-auto border-t border-surface-light">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+                <span class="text-xs uppercase tracking-[0.3em] text-brand font-mono font-bold">Capabilities</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-3 text-black">
+                    Engineered for Impact. <br class="hidden sm:inline" /><span
+                        class="text-muted">Built for Momentum.</span>
+                </h2>
+            </div>
+            <p class="text-muted text-sm md:text-base max-w-md leading-relaxed">
+                We bridge the gap between world-class engineering and emotional design, delivering web software that
+                outperforms competitors on every metric.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Card 1: Web Development (Frame 040 visual) -->
+            <div
+                class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+                <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-040.jpg" alt="Web Development"
+                        class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/70 backdrop-blur-md border border-beige/10 text-brand">
+                        01 / ENGINEERING
+                    </span>
+                </div>
+                <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">
+                            Web Development</h3>
+                        <p class="text-muted text-sm leading-relaxed mb-6">
+                            Full-stack architecture utilizing modern reactive frameworks, serverless infrastructure,
+                            fluid animations, and custom headless CMS implementations.
+                        </p>
+                    </div>
+                    <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Next.js</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">WebGL
+                            / 3D</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">TypeScript</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: UI / UX Design (Frame 080 visual) -->
+            <div
+                class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+                <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-080.jpg" alt="UI-UX Architecture"
+                        class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/70 backdrop-blur-md border border-beige/10 text-brand">
+                        02 / EXPERIENCE
+                    </span>
+                </div>
+                <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">
+                            UI/UX Design</h3>
+                        <p class="text-muted text-sm leading-relaxed mb-6">
+                            Iconic brand visual systems, ergonomic design frameworks, bespoke iconography,
+                            micro-interactions, and conversion-optimized checkout journeys.
+                        </p>
+                    </div>
+                    <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Design
+                            Systems</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Prototyping</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Interaction</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Growth & Optimization (Frame 120 visual) -->
+            <div
+                class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+                <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-120.jpg" alt="Growth & Conversion"
+                        class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/70 backdrop-blur-md border border-beige/10 text-brand">
+                        03 / PERFORMANCE
+                    </span>
+                </div>
+                <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">
+                            Growth & Optimization</h3>
+                        <p class="text-muted text-sm leading-relaxed mb-6">
+                            Data-backed funnel optimization, SEO technical mastery, A/B landing experiments, and
+                            analytics telemetry to scale user acquisition.
+                        </p>
+                    </div>
+                    <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">CRO
+                            Funnels</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Performance</span>
+                        <span
+                            class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Analytics</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: PORTFOLIO / SELECTED RELEASES                  -->
+    <!-- ======================================================== -->
+    <section id="work"
+        class="relative z-30 py-28 bg-surface/50 border-y border-surface-light transition-colors">
+        <div class="max-w-7xl mx-auto px-6 mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+                <span class="text-xs uppercase tracking-[0.3em] text-brand font-mono font-bold">Portfolio</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-2 text-black">
+                    Selected Releases
+                </h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="carousel-prev" aria-label="Previous Project"
+                    class="w-11 h-11 rounded-full border border-beige/10 bg-transparent flex items-center justify-center text-muted hover:text-brand hover:border-brand transition-colors cursor-pointer shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button id="carousel-next" aria-label="Next Project"
+                    class="w-11 h-11 rounded-full border border-beige/10 bg-transparent flex items-center justify-center text-muted hover:text-brand hover:border-brand transition-colors cursor-pointer shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Carousel Track -->
+        <div id="carousel-track"
+            class="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 sm:px-12 pb-6 no-scrollbar scroll-smooth">
+
+            <!-- Slide 1: Omni Commerce Suite (Frame 192 mockup) -->
+            <div class="snap-center shrink-0 w-[86vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+                <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-192.jpg" alt="Agency multi-screen web project"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+                        E-Commerce & SaaS
+                    </span>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors">
+                            Omni Commerce Suite</h3>
+                        <span class="text-xs font-mono text-muted font-semibold">2024</span>
+                    </div>
+                    <p class="text-muted text-sm mb-4 leading-relaxed">
+                        End-to-end responsive web ecosystem powering multi-brand storefronts with sub-second page
+                        transitions and custom checkout engines.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs font-mono text-brand font-bold">
+                        <span>Explore Case Study</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Aura Financial (Frame 160 mockup) -->
+            <div class="snap-center shrink-0 w-[86vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+                <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-160.jpg" alt="3D Glass kinetic platform"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+                        Fintech Platform
+                    </span>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors">
+                            Aura Financial</h3>
+                        <span class="text-xs font-mono text-muted font-semibold">2024</span>
+                    </div>
+                    <p class="text-muted text-sm mb-4 leading-relaxed">
+                        Interactive investment platform featuring real-time glassmorphic WebGL telemetry, tactile
+                        micro-interactions, and instant trade execution.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs font-mono text-brand font-bold">
+                        <span>Explore Case Study</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Helix Spatial Audio (Frame 080 mockup) -->
+            <div class="snap-center shrink-0 w-[86vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+                <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+                    <img src="./public/frames/ezgif-frame-080.jpg" alt="Brand Identity & 3D art"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent">
+                    </div>
+                    <span
+                        class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+                        Creative Direction
+                    </span>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3
+                            class="text-2xl font-bold text-black group-hover:text-brand transition-colors">
+                            Helix Spatial Audio</h3>
+                        <span class="text-xs font-mono text-muted font-semibold">2023</span>
+                    </div>
+                    <p class="text-muted text-sm mb-4 leading-relaxed">
+                        Sonic spatial visualizer combining responsive generative audio shaders with algorithmic
+                        typography for an immersive product launch.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs font-mono text-brand font-bold">
+                        <span>Explore Case Study</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: KEY PERFORMANCE METRICS                       -->
+    <!-- ======================================================== -->
+    <section id="stats" class="relative z-30 py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+
+            <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+                <div
+                    class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all">
+                </div>
+                <div
+                    class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+                    50<span class="text-brand">+</span>
+                </div>
+                <div
+                    class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2 font-bold">
+                    Projects Delivered</div>
+                <p class="text-muted text-xs">From seed-stage startups to Fortune 500 digital
+                    flagships.</p>
+            </div>
+
+            <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+                <div
+                    class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all">
+                </div>
+                <div
+                    class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+                    99<span class="text-brand">%</span>
+                </div>
+                <div
+                    class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2 font-bold">
+                    Happy Clients</div>
+                <p class="text-muted text-xs">Uncompromising craft reflected in long-term
+                    retainer partnerships.</p>
+            </div>
+
+            <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+                <div
+                    class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all">
+                </div>
+                <div
+                    class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+                    24<span class="text-brand">/</span>7
+                </div>
+                <div
+                    class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2 font-bold">
+                    Support & Uptime</div>
+                <p class="text-muted text-xs">Continuous performance monitoring, zero downtime
+                    deployments.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 4: FOOTER & INQUIRY FORM                          -->
+    <!-- ======================================================== -->
+    <footer id="contact"
+        class="relative z-30 pt-28 pb-16 px-6 border-t border-surface-light bg-white transition-colors">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Call to Action Title -->
+            <div class="mb-20 text-center md:text-left">
+                <span class="text-xs uppercase tracking-[0.35em] text-brand font-mono font-bold">Start A
+                    Conversation</span>
+                <h2
+                    class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-black mt-4 max-w-4xl leading-[1.05]">
+                    Let’s Build Something <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-brand to-brand">Iconic.</span>
+                </h2>
+            </div>
+
+            <!-- Main Footer Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-20 border-b border-surface-light">
+
+                <!-- Contact Form (Cols 1-7) -->
+                <div class="lg:col-span-7 glass-card p-8 sm:p-10 rounded-3xl">
+                    <form id="contact-form"
+                        onsubmit="event.preventDefault(); document.getElementById('form-success').classList.remove('hidden');"
+                        class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-wider font-mono text-muted mb-2 font-bold">Your
+                                    Name</label>
+                                <input type="text" required placeholder="Alex Turner"
+                                    class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-slate-400 placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-wider font-mono text-muted mb-2 font-bold">Email
+                                    Address</label>
+                                <input type="email" required placeholder="alex@company.com"
+                                    class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-slate-400 placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-wider font-mono text-muted mb-2 font-bold">Interested
+                                    In</label>
+                                <select
+                                    class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors">
+                                    <option class="bg-surface-light text-black">Web
+                                        Development & 3D</option>
+                                    <option class="bg-surface-light text-black">UI / UX
+                                        Product Design</option>
+                                    <option class="bg-surface-light text-black">Full
+                                        Digital Rebrand</option>
+                                    <option class="bg-surface-light text-black">Growth &
+                                        Optimization</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs uppercase tracking-wider font-mono text-muted mb-2 font-bold">Expected
+                                    Budget</label>
+                                <select
+                                    class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors">
+                                    <option class="bg-surface-light text-black">$10,000 –
+                                        $25,000</option>
+                                    <option class="bg-surface-light text-black">$25,000 –
+                                        $50,000</option>
+                                    <option class="bg-surface-light text-black">$50,000 –
+                                        $100,000+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs uppercase tracking-wider font-mono text-muted mb-2 font-bold">Project
+                                Brief</label>
+                            <textarea rows="4" placeholder="Tell us about your product goals, timeline, and vision..."
+                                class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-slate-400 placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full py-4 rounded-xl bg-brand hover:bg-brand-glow text-black font-bold text-sm tracking-wide transition-all duration-300 shadow-xl shadow-brand/30 hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
+                            Submit Inquiry →
+                        </button>
+
+                        <div id="form-success"
+                            class="hidden p-4 rounded-xl bg-brand/10 border border-brand/30 text-brand text-xs text-center font-mono font-medium">
+                            ✓ Inquiry transmitted. Our directors will review and respond within 24 hours.
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Agency Quick Info (Cols 8-12) -->
+                <div class="lg:col-span-5 flex flex-col justify-between space-y-8">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand to-brand flex items-center justify-center font-black text-black text-base shadow-md shadow-brand/40">
+                                CC
+                            </div>
+                            <div>
+                                <span
+                                    class="font-extrabold text-xl tracking-tight text-black block">Code
+                                    and Clix</span>
+                                <span class="text-xs text-muted font-mono">Digital Product
+                                    Agency</span>
+                            </div>
+                        </div>
+
+                        <p class="text-muted text-sm leading-relaxed mb-8">
+                            We engineer bespoke digital flagship products, 3D interaction frameworks, and scalable web
+                            apps for brands unwilling to look like everyone else.
+                        </p>
+
+                        <div class="space-y-4 text-sm font-mono text-muted">
+                            <div class="flex items-center gap-3">
+                                <span class="text-brand font-bold">HQ:</span>
+                                <span class="text-muted">San Francisco, CA & Remote
+                                    Worldwide</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-brand font-bold">EMAIL:</span>
+                                <a href="mailto:hello@codeandclix.com"
+                                    class="text-muted hover:text-brand transition-colors">hello@codeandclix.com</a>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-brand font-bold">CALL:</span>
+                                <span class="text-muted">+1 (415) 890-CLIX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agency Status Box -->
+                    <div
+                        class="p-6 rounded-2xl bg-surface-light border border-beige/5">
+                        <div
+                            class="flex items-center gap-2 mb-2 text-xs font-mono text-brand font-bold">
+                            <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> CURRENT STATUS
+                        </div>
+                        <p class="text-xs text-muted leading-relaxed">
+                            Accepting 2 new client partnerships for Q2/Q3 rollout. Inquire early to lock engineering
+                            sprint allocation.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Copyright Bottom Bar -->
+            <div
+                class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-muted gap-4">
+                <div>© 2025 Code and Clix Agency. All rights reserved.</div>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-brand transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-brand transition-colors">Terms of Work</a>
+                    <a href="#" class="hover:text-brand transition-colors">Twitter / X</a>
+                    <a href="#" class="hover:text-brand transition-colors">GitHub</a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- ======================================================== -->
+    <!-- APPLE-STYLE 3D SCROLL & CANVAS ENGINE                   -->
+    <!-- ======================================================== -->
+    <script>
+        (function () {
+            // Fixed white and terracotta brand theme.
+            document.documentElement.classList.add('dark');
+
+            // 2. CANVAS & 192 FRAMES ENGINE
+            const TOTAL_FRAMES = 192;
+            const images = new Array(TOTAL_FRAMES);
+            let loadedImagesCount = 0;
+            let currentFrameIndex = 0;
+            let isRendering = false;
+
+            const canvas = document.getElementById('hero-canvas');
+            const ctx = canvas.getContext('2d', { alpha: true });
+            const heroContainer = document.getElementById('hero-container');
+            const heroSpacer = document.getElementById('hero-spacer');
+            const loaderOverlay = document.getElementById('loader-overlay');
+            const loaderPercentage = document.getElementById('loader-percentage');
+            const loaderProgressBar = document.getElementById('loader-progress-bar');
+            const frameCounter = document.getElementById('frame-counter');
+            const frameProgress = document.getElementById('frame-progress');
+            const scrollPrompt = document.getElementById('scroll-prompt');
+
+            // Typography blocks
+            const textBlock1 = document.getElementById('text-block-1');
+            const textBlock2 = document.getElementById('text-block-2');
+            const textBlock3 = document.getElementById('text-block-3');
+            const textBlock4 = document.getElementById('text-block-4');
+
+            // Helper to generate the exact frame path
+            function getFrameSrc(index) {
+                const frameNum = String(index + 1).padStart(3, '0');
+                return `./public/frames/ezgif-frame-${frameNum}.jpg`;
+            }
+
+            // Resize canvas with pixel ratio support for crisp, no-blur rendering
+            function resizeCanvas() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+
+                canvas.width = Math.round(w * dpr);
+                canvas.height = Math.round(h * dpr);
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                drawFrame(currentFrameIndex);
+            }
+
+            // Draw frame centered with pixel-snapped cover scale
+            function drawFrame(index) {
+                let img = images[index];
+
+                // If target frame not loaded, find closest loaded neighbor
+                if (!img || !img.complete || img.naturalWidth === 0) {
+                    let minDiff = 999;
+                    let bestIdx = -1;
+                    for (let k = 0; k < TOTAL_FRAMES; k++) {
+                        if (images[k] && images[k].complete && images[k].naturalWidth !== 0) {
+                            const diff = Math.abs(k - index);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                bestIdx = k;
+                            }
+                        }
+                    }
+                    if (bestIdx >= 0) {
+                        img = images[bestIdx];
+                    }
+                }
+
+                if (!img || !img.complete || img.naturalWidth === 0) return;
+
+                const cw = window.innerWidth;
+                const ch = window.innerHeight;
+
+                // Cover scale calculation
+                const imgRatio = img.naturalWidth / img.naturalHeight;
+                const screenRatio = cw / ch;
+
+                let nw, nh;
+                if (screenRatio > imgRatio) {
+                    nw = cw;
+                    nh = cw / imgRatio;
+                } else {
+                    nh = ch;
+                    nw = ch * imgRatio;
+                }
+
+                // Snapping coordinates to whole pixels prevents subpixel blurring
+                const ox = Math.round((cw - nw) / 2);
+                const oy = Math.round((ch - nh) / 2);
+                nw = Math.round(nw);
+                nh = Math.round(nh);
+
+                ctx.clearRect(0, 0, cw, ch);
+                ctx.drawImage(img, ox, oy, nw, nh);
+            }
+
+            // Preload all 192 frames asynchronously
+            function preloadFrames() {
+                const promises = [];
+
+                for (let i = 0; i < TOTAL_FRAMES; i++) {
+                    const p = new Promise((resolve) => {
+                        const img = new Image();
+
+                        img.onload = () => {
+                            images[i] = img;
+                            loadedImagesCount++;
+                            updateLoader();
+                            if (i === 0) {
+                                drawFrame(0);
+                            }
+                            resolve(img);
+                        };
+
+                        img.onerror = () => {
+                            // Try fallback path if relative path needs alternate prefix
+                            const num = String(i + 1).padStart(3, '0');
+                            if (!img.dataset.retried) {
+                                img.dataset.retried = '1';
+                                img.src = `/public/frames/ezgif-frame-${num}.jpg`;
+                            } else if (img.dataset.retried === '1') {
+                                img.dataset.retried = '2';
+                                img.src = `frames/ezgif-frame-${num}.jpg`;
+                            } else {
+                                loadedImagesCount++;
+                                updateLoader();
+                                resolve(null);
+                            }
+                        };
+
+                        img.src = getFrameSrc(i);
+                    });
+                    promises.push(p);
+                }
+
+                function updateLoader() {
+                    const percent = Math.min(100, Math.floor((loadedImagesCount / TOTAL_FRAMES) * 100));
+                    if (loaderPercentage) loaderPercentage.textContent = `${percent}%`;
+                    if (loaderProgressBar) loaderProgressBar.style.width = `${percent}%`;
+
+                    if (loadedImagesCount === 1) {
+                        drawFrame(0);
+                    }
+                }
+
+                Promise.all(promises).then(() => {
+                    setTimeout(() => {
+                        if (loaderOverlay) {
+                            loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
+                            setTimeout(() => { loaderOverlay.style.display = 'none'; }, 700);
+                        }
+                        drawFrame(0);
+                    }, 300);
+                });
+
+                // Fail-safe timeout: hide loader after 2.5s even if slow network
+                setTimeout(() => {
+                    if (loaderOverlay && !loaderOverlay.classList.contains('opacity-0')) {
+                        loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
+                        setTimeout(() => { loaderOverlay.style.display = 'none'; }, 700);
+                        drawFrame(0);
+                    }
+                }, 2500);
+            }
+
+            // Calculate opacity curve for text blocks
+            function calculateRangeOpacity(frame, start, end, fadeBuffer = 6) {
+                if (frame < start || frame > end) return 0;
+                if (frame < start + fadeBuffer) {
+                    return (frame - start) / fadeBuffer;
+                }
+                if (frame > end - fadeBuffer) {
+                    return (end - frame) / fadeBuffer;
+                }
+                return 1;
+            }
+
+            // Update frame on scroll using requestAnimationFrame
+            function onScroll() {
+                if (isRendering) return;
+                isRendering = true;
+
+                requestAnimationFrame(() => {
+                    const containerTop = heroContainer.offsetTop;
+                    const containerHeight = heroSpacer.offsetHeight;
+                    const scrollY = window.scrollY;
+
+                    // Fraction across the 400vh scroll container
+                    const scrollFraction = Math.max(0, Math.min(1, (scrollY - containerTop) / containerHeight));
+
+                    const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollFraction * (TOTAL_FRAMES - 1)));
+                    currentFrameIndex = frameIndex;
+
+                    drawFrame(frameIndex);
+
+                    // Update UI frame indicators
+                    if (frameCounter) frameCounter.textContent = String(frameIndex + 1).padStart(3, '0');
+                    if (frameProgress) frameProgress.style.width = `${(frameIndex / (TOTAL_FRAMES - 1)) * 100}%`;
+                    if (scrollPrompt) {
+                        scrollPrompt.style.opacity = frameIndex > 10 ? '0' : '1';
+                    }
+
+                    // Frame text opacity transitions
+                    // Block 1 (frames 5 - 35)
+                    const op1 = calculateRangeOpacity(frameIndex, 5, 35, 6);
+                    textBlock1.style.opacity = op1;
+                    textBlock1.style.transform = `translateY(${(1 - op1) * 12}px) scale(${0.96 + op1 * 0.04})`;
+
+                    // Block 2 (frames 50 - 80)
+                    const op2 = calculateRangeOpacity(frameIndex, 50, 80, 6);
+                    textBlock2.style.opacity = op2;
+                    textBlock2.style.transform = `translateY(${(1 - op2) * 12}px) scale(${0.96 + op2 * 0.04})`;
+
+                    // Block 3 (frames 100 - 130)
+                    const op3 = calculateRangeOpacity(frameIndex, 100, 130, 6);
+                    textBlock3.style.opacity = op3;
+                    textBlock3.style.transform = `translateY(${(1 - op3) * 12}px) scale(${0.96 + op3 * 0.04})`;
+
+                    // Block 4 / CTA (frames 155 - 191)
+                    const op4 = calculateRangeOpacity(frameIndex, 155, 191, 7);
+                    textBlock4.style.opacity = op4;
+                    textBlock4.style.transform = `translateY(${(1 - op4) * 16}px) scale(${0.95 + op4 * 0.05})`;
+
+                    isRendering = false;
+                });
+            }
+
+            // Carousel controls
+            const track = document.getElementById('carousel-track');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+
+            if (prevBtn && nextBtn && track) {
+                prevBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: -420, behavior: 'smooth' });
+                });
+                nextBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: 420, behavior: 'smooth' });
+                });
+            }
+
+            // Event listeners
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('scroll', onScroll, { passive: true });
+
+            // Init sequence
+            resizeCanvas();
+            preloadFrames();
+            onScroll();
+        })();
+    </script>
+</body>
+
+</html>

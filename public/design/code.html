@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-white text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code and Clix | Digital Product Agency</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & SF Pro display font style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#C77D62',
+            black: '#111111',
+            white: '#FFFFFF',
+            beige: '#D8B9A8',
+            muted: '#111111',
+            'brand-glow': '#C77D62',
+            surface: '#FFFFFF',
+            'surface-light': '#E8E3DC',
+            border: '#E8E3DC',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'SF Pro Display', '-apple-system', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Grain texture overlay */
+    .grain-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 40;
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+    
+    /* Text mix blend */
+    .hero-title-blend {
+      mix-blend-mode: difference;
+      font-size: clamp(2.5rem, 6vw, 6.5rem);
+      letter-spacing: -0.04em;
+    }
+
+    /* Hide scrollbars for carousel */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    /* Glass card */
+    .glass-card {
+      background: rgba(232, 227, 220, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(216, 185, 168, 0.65);
+    }
+    .glass-card:hover {
+      border-color: rgba(199, 125, 98, 0.4);
+      box-shadow: 0 10px 40px -10px rgba(199, 125, 98, 0.15);
+    }
+  
+    :root { color-scheme: light; background: #FFFFFF; }
+    body { background-color: #FFFFFF; color: #111111; }
+    
+    ::selection { background: #C77D62; color: #111111; }
+    :focus-visible { outline: 2px solid #C77D62; outline-offset: 4px; }
+  
+    .text-muted { color: rgb(17 17 17 / 0.65); }
+    .glass-card { background: rgb(232 227 220 / 0.72); }
+    a.bg-brand, button.bg-brand { color: #111111; }
+    ::selection { background: #D8B9A8; color: #111111; }
+  </style>
+</head>
+<body class="bg-white text-black font-sans antialiased selection:bg-brand selection:text-black relative overflow-x-hidden">
+
+  <!-- Grain Texture Overlay -->
+  <div class="grain-overlay"></div>
+
+  <!-- Loading Bar Indicator (Shown at top while preloading frames) -->
+  <div id="loader-overlay" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="w-16 h-16 relative flex items-center justify-center mb-6">
+      <div class="absolute inset-0 rounded-full border border-brand/20 animate-ping"></div>
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand to-brand flex items-center justify-center shadow-lg shadow-brand/40 font-bold text-black tracking-tighter text-xl">
+        C&C
+      </div>
+    </div>
+    <div class="text-xs uppercase tracking-[0.3em] text-muted font-mono mb-2">Initializing Experience</div>
+    <div class="text-3xl font-extrabold font-mono tracking-tight text-black mb-6" id="loader-percentage">0%</div>
+    <div class="w-64 h-1.5 bg-surface-light rounded-full overflow-hidden p-0.5 border border-surface-light">
+      <div id="loader-progress-bar" class="h-full bg-gradient-to-r from-brand to-brand rounded-full w-0 transition-all duration-150"></div>
+    </div>
+    <p class="text-muted text-xs mt-4">Preloading high-fidelity render sequence...</p>
+  </div>
+
+  <!-- Global Sticky Navigation Bar -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-6 py-4 transition-all duration-300 backdrop-blur-md bg-white/40 border-b border-beige/5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#hero-container" class="flex items-center gap-3 group">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand to-brand flex items-center justify-center font-bold text-black tracking-tighter text-sm shadow-md shadow-brand/30 group-hover:scale-105 transition-transform">
+          CC
+        </div>
+        <span class="font-extrabold tracking-tight text-lg text-black group-hover:text-brand transition-colors">
+          Code <span class="text-brand">&</span> Clix
+        </span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
+        <a href="#services" class="hover:text-black transition-colors">Services</a>
+        <a href="#work" class="hover:text-black transition-colors">Selected Work</a>
+        <a href="#stats" class="hover:text-black transition-colors">Metrics</a>
+        <a href="#contact" class="hover:text-black transition-colors">Agency</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span> Available Q2/Q3
+        </span>
+        <a href="#contact" class="px-5 py-2.5 rounded-full bg-white text-black text-xs md:text-sm font-bold tracking-wide hover:bg-brand transition-all duration-300 shadow-sm hover:shadow-brand/40 hover:text-black">
+          Get in Touch
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- REQUIREMENT 1: HERO APPLE SCROLL SEQUENCE CONTAINER      -->
+  <!-- ======================================================== -->
+  <div id="hero-container" class="relative w-full">
+    
+    <!-- Sticky Canvas Viewport (Sticky to screen) -->
+    <div class="sticky top-0 left-0 w-full h-screen z-10 overflow-hidden flex items-center justify-center pointer-events-none">
+      
+      <!-- Sequence Canvas -->
+      <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover pointer-events-none"></canvas>
+
+      <!-- Soft gradient edges for cinematic feel -->
+      <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-white/60 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-white/70 pointer-events-none"></div>
+
+      <!-- Scroll Hint Badge -->
+      <div id="scroll-prompt" class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto transition-opacity duration-500">
+        <span class="text-[11px] font-mono tracking-[0.25em] text-muted uppercase">Scroll to Explore</span>
+        <div class="w-5 h-9 rounded-full border-2 border-beige/20 flex items-start justify-center p-1">
+          <div class="w-1.5 h-2 rounded-full bg-brand animate-bounce"></div>
+        </div>
+      </div>
+
+      <!-- Dynamic Frame Overlay Typography (Calculated based on frame index) -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center z-20 pointer-events-none">
+        
+        <!-- Text 1 (Frames 5 - 35) -->
+        <div id="text-block-1" class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+          <span class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-semibold mb-3">Code and Clix Agency</span>
+          <h1 class="hero-title-blend font-extrabold text-black leading-none max-w-5xl">
+            We Build Digital Experiences
+          </h1>
+          <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+            Engineering next-generation web platforms, immersive 3D interfaces, and high-conversion software.
+          </p>
+        </div>
+
+        <!-- Text 2 (Frames 50 - 80) -->
+        <div id="text-block-2" class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+          <span class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-semibold mb-3">Precision Engineering</span>
+          <h2 class="hero-title-blend font-extrabold text-black leading-none max-w-5xl">
+            Code That Converts
+          </h2>
+          <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+            Architected for blazing speed, search authority, and rock-solid scalability.
+          </p>
+        </div>
+
+        <!-- Text 3 (Frames 100 - 130) -->
+        <div id="text-block-3" class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform">
+          <span class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-semibold mb-3">Behavioral Aesthetics</span>
+          <h2 class="hero-title-blend font-extrabold text-black leading-none max-w-5xl">
+            Clix That Click
+          </h2>
+          <p class="text-muted text-sm md:text-base font-normal mt-4 max-w-lg">
+            Intuitive interaction design crafted to turn casual visitors into loyal brand advocates.
+          </p>
+        </div>
+
+        <!-- Text 4 / CTA (Frames 160 - 191) -->
+        <div id="text-block-4" class="absolute flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 transform pointer-events-auto">
+          <span class="text-xs md:text-sm uppercase tracking-[0.35em] text-brand font-mono font-semibold mb-4">Ready To Elevate?</span>
+          <h2 class="hero-title-blend font-extrabold text-black leading-none max-w-5xl mb-8">
+            Create The Future
+          </h2>
+          <a href="#contact" class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-brand hover:bg-brand-glow text-black text-base md:text-lg font-bold shadow-2xl shadow-brand/50 hover:shadow-brand/70 hover:scale-105 active:scale-95 transition-all duration-300">
+            <span>Start Your Project</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Scrub Progress Indicator for User -->
+      <div class="absolute bottom-6 right-8 hidden md:flex items-center gap-3 font-mono text-[10px] text-muted z-30">
+        <span>FRAME</span>
+        <span id="frame-counter" class="text-brand font-semibold w-8">001</span>
+        <div class="w-20 h-1 bg-surface-light rounded-full overflow-hidden">
+          <div id="frame-progress" class="h-full bg-brand w-0"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scroll Spacer Div (400vh to create the tactile scroll canvas timeline) -->
+    <div id="hero-spacer" class="h-[400vh] w-full pointer-events-none"></div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- REQUIREMENT 3: CONTENT SECTIONS AFTER SCROLL TIMELINE    -->
+  <!-- ======================================================== -->
+
+  <!-- SECTION 1: SERVICES (3 Cards with frame visual backgrounds) -->
+  <section id="services" class="relative z-30 py-32 px-6 max-w-7xl mx-auto border-t border-surface-light">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+      <div>
+        <span class="text-xs uppercase tracking-[0.3em] text-brand font-mono font-semibold">Capabilities</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-3 text-black">
+          Engineered for Impact. <br class="hidden sm:inline"/><span class="text-muted">Built for Momentum.</span>
+        </h2>
+      </div>
+      <p class="text-muted text-sm md:text-base max-w-md">
+        We bridge the gap between world-class engineering and emotional design, delivering web software that outperforms competitors on every metric.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Card 1: Web Development (Frame 40 / IMAGE_5 reference) -->
+      <div class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+        <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8xe4CloIdA-YQj7UJ6dN3PVL1EUHmORUJ8whhoxI5UOSlw2QUz_GSNXTRJnsDGeDyeCiQ09IumWnwuNvO5UOeTDyVQ-wcW-p67-5nxaO8cOpWL3Oo7jKGlutObTAaWWgTwhIGed5O3ACp-OOeAILeRZMlkKMxyd51MbUtqp_o2A7A037fB6HlallFIZVeKj1PfFR1cfgR3RckTTChUrudP-bFMdECoAqOvjl873LuzE3biF3Wja_VsJVOV9zYX59-yg" alt="Web Development" class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-80 group-hover:opacity-100">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+          <span class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-white/60 backdrop-blur-md border border-beige/10 text-brand">
+            01 / ENGINEERING
+          </span>
+        </div>
+        <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">Web Development</h3>
+            <p class="text-muted text-sm leading-relaxed mb-6">
+              Full-stack architecture utilizing modern reactive frameworks, serverless infrastructure, fluid animations, and custom headless CMS implementations.
+            </p>
+          </div>
+          <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Next.js</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">WebGL / 3D</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">TypeScript</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: UI / UX Design (Frame 80 / IMAGE_4 reference) -->
+      <div class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+        <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy38Q3eax__d8i_OLkGJtEw2YDY75aDefnR2CYOenNxD9g2XD1JiJQa8jt0TF1HRHiCu-63WHTdL2MvzuMWNm4sneTWwERRc7zwRC4rigaH9qXub3Y6a8Fn5c18wt8w2bkK9OBbs7t1v-UsJ5_jU_b79DhZC7vWf57jGnb2y1nDex5WLkf8TEfLPbEEZdoRtJ8fKnxGbNVbNoiacl-E-iLlJXucXvrCBlSiA-JC3GQkOJrKI-s6r-UTaLnAurfhYRP-Q" alt="UI-UX Architecture" class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-80 group-hover:opacity-100">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+          <span class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-white/60 backdrop-blur-md border border-beige/10 text-brand">
+            02 / EXPERIENCE
+          </span>
+        </div>
+        <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">UI/UX Design</h3>
+            <p class="text-muted text-sm leading-relaxed mb-6">
+              Iconic brand visual systems, ergonomic design frameworks, bespoke iconography, micro-interactions, and conversion-optimized checkout journeys.
+            </p>
+          </div>
+          <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Design Systems</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Prototyping</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Interaction</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Growth & Analytics (Frame 120 / IMAGE_3 reference) -->
+      <div class="glass-card rounded-3xl overflow-hidden group transition-all duration-500 flex flex-col justify-between">
+        <div class="relative h-60 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbXmQjLVsIhCF_WD_YW097nxH3kaVwJ-mFDRH2YkPuCSxRuKS2VdGjJsvmewSx5Ab-qzqQ5EmLHOAr5fEwKQSyB-8wwp0LSt8REAiK0MGh_5ypeDgnhenl1dnIrtw19qeC4LpcVK9AYNtJjuhT8fEYKVG0OU3_FWPGkWwVxtLqwRkBAF1YeR1yS7vrVNucHv9Duf2cYG31AcYhaHHEg78WkajcAsT64PMG2ncPZg7SM9lB3-2IevO3bYNBgyh8gvvyew" alt="Growth & Conversion" class="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-transform duration-700 opacity-80 group-hover:opacity-100">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+          <span class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-white/60 backdrop-blur-md border border-beige/10 text-brand">
+            03 / PERFORMANCE
+          </span>
+        </div>
+        <div class="p-8 pt-4 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors mb-3">Growth & Optimization</h3>
+            <p class="text-muted text-sm leading-relaxed mb-6">
+              Data-backed funnel optimization, SEO technical mastery, A/B landing experiments, and analytics telemetry to scale user acquisition.
+            </p>
+          </div>
+          <div class="border-t border-beige/5 pt-4 flex flex-wrap gap-2">
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">CRO Funnels</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Performance</span>
+            <span class="px-2.5 py-1 text-[11px] font-mono rounded bg-surface-light/60 text-muted">Analytics</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: WORK (Horizontal Snap Carousel using frames 160 & 192 mockups) -->
+  <section id="work" class="relative z-30 py-28 bg-surface/50 border-y border-surface-light">
+    <div class="max-w-7xl mx-auto px-6 mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-[0.3em] text-brand font-mono font-semibold">Portfolio</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-2 text-black">
+          Selected Releases
+        </h2>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="carousel-prev" class="w-11 h-11 rounded-full border border-beige/10 flex items-center justify-center text-muted hover:text-black hover:border-brand hover:bg-brand/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button id="carousel-next" class="w-11 h-11 rounded-full border border-beige/10 flex items-center justify-center text-muted hover:text-black hover:border-brand hover:bg-brand/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Carousel Track -->
+    <div id="carousel-track" class="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 sm:px-12 pb-6 no-scrollbar scroll-smooth">
+      
+      <!-- Slide 1: Multi-Device Ecosystem (IMAGE_1 / Frame 192) -->
+      <div class="snap-center shrink-0 w-[85vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+        <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyYCwuYle7thlYjpfmk7cEDmxGhKF9Wr2ICNGz5W86LGaBA8yML74vCHpB3MT9Ce8jwr-P3S3IikOkJOQOQwCq8KZNcgGNc7gqCRHMWzB2IAcB-Jsrp4EcABlbYlipPmISX3dLvkbH82ZUMzMt_f5PT5HRnlk8e7VRDuN0ZDCfzPqCJmyoAc5jhSORKmOEHp6Zp_2xCkkaAVcTaKRZ3Um-DQuvgr1UnVyzwDdejaWnzGk6GqyVb0hWx-xkHkL4p_yEwQ" alt="Agency multi-screen web project" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+          <span class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+            E-Commerce & SaaS
+          </span>
+        </div>
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors">Omni Commerce Suite</h3>
+            <span class="text-xs font-mono text-muted">2024</span>
+          </div>
+          <p class="text-muted text-sm mb-4 leading-relaxed">
+            End-to-end responsive web ecosystem powering multi-brand storefronts with sub-second page transitions and custom checkout engines.
+          </p>
+          <div class="flex items-center gap-2 text-xs font-mono text-brand font-semibold">
+            <span>Explore Case Study</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: 3D Kinetic Elements (IMAGE_2 / Frame 160) -->
+      <div class="snap-center shrink-0 w-[85vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+        <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMjgjdk0aZ7MzZjzJMCxID28Vs4kb4alqkQw8G55_OpB2nAHeqaHTtLfXNHGyzgG-hjm9KXjSiOHkx4YzFl9NS7AU9rq9CopIbU9Zi6DxNEeuN4jkemrrW-iVlwWgI6ayRxQWFUVZtj2Cl-mq8DyZCrq5wcQa7opXPTonSIl2sqHswmq1YLqQULkd9gE-8tr5EoEZaCBDsQGzUSytlP6AETfZW2kSUz-lvzGRCMe7PjZG8LA9PCbmkdI_FVrYdHUZq5w" alt="3D Glass kinetic icons" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+          <span class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+            Fintech Platform
+          </span>
+        </div>
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors">Aura Financial</h3>
+            <span class="text-xs font-mono text-muted">2024</span>
+          </div>
+          <p class="text-muted text-sm mb-4 leading-relaxed">
+            Interactive investment platform featuring real-time glassmorphic WebGL telemetry, tactile micro-interactions, and instant trade execution.
+          </p>
+          <div class="flex items-center gap-2 text-xs font-mono text-brand font-semibold">
+            <span>Explore Case Study</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Abstract Torus Studio (IMAGE_4 / Frame 80) -->
+      <div class="snap-center shrink-0 w-[85vw] sm:w-[620px] rounded-3xl glass-card overflow-hidden group">
+        <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-surface-light">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy38Q3eax__d8i_OLkGJtEw2YDY75aDefnR2CYOenNxD9g2XD1JiJQa8jt0TF1HRHiCu-63WHTdL2MvzuMWNm4sneTWwERRc7zwRC4rigaH9qXub3Y6a8Fn5c18wt8w2bkK9OBbs7t1v-UsJ5_jU_b79DhZC7vWf57jGnb2y1nDex5WLkf8TEfLPbEEZdoRtJ8fKnxGbNVbNoiacl-E-iLlJXucXvrCBlSiA-JC3GQkOJrKI-s6r-UTaLnAurfhYRP-Q" alt="Brand Identity & 3D art" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+          <span class="absolute top-6 left-6 px-3.5 py-1 rounded-full text-xs font-mono font-medium bg-white/70 backdrop-blur border border-beige/10 text-black">
+            Creative Direction
+          </span>
+        </div>
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-2xl font-bold text-black group-hover:text-brand transition-colors">Helix Spatial Audio</h3>
+            <span class="text-xs font-mono text-muted">2023</span>
+          </div>
+          <p class="text-muted text-sm mb-4 leading-relaxed">
+            Sonic spatial visualizer combining responsive generative audio shaders with algorithmic typography for an immersive product launch.
+          </p>
+          <div class="flex items-center gap-2 text-xs font-mono text-brand font-semibold">
+            <span>Explore Case Study</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: STATS (Key performance metrics) -->
+  <section id="stats" class="relative z-30 py-24 px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      
+      <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all"></div>
+        <div class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+          50<span class="text-brand">+</span>
+        </div>
+        <div class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2">Projects Delivered</div>
+        <p class="text-muted text-xs">From seed-stage startups to Fortune 500 digital flagships.</p>
+      </div>
+
+      <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all"></div>
+        <div class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+          99<span class="text-brand">%</span>
+        </div>
+        <div class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2">Happy Clients</div>
+        <p class="text-muted text-xs">Uncompromising craft reflected in long-term retainer partnerships.</p>
+      </div>
+
+      <div class="glass-card p-10 rounded-3xl text-center relative overflow-hidden group">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-all"></div>
+        <div class="text-5xl md:text-6xl font-extrabold tracking-tight text-black mb-2 font-mono">
+          24<span class="text-brand">/</span>7
+        </div>
+        <div class="text-xs font-mono uppercase tracking-[0.25em] text-muted mb-2">Support & Uptime</div>
+        <p class="text-muted text-xs">Continuous performance monitoring, zero downtime deployments.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: FOOTER & CONTACT FORM -->
+  <footer id="contact" class="relative z-30 pt-28 pb-16 px-6 border-t border-surface-light bg-white">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Big Call to Action Title -->
+      <div class="mb-20 text-center md:text-left">
+        <span class="text-xs uppercase tracking-[0.35em] text-brand font-mono font-semibold">Start A Conversation</span>
+        <h2 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-black mt-4 max-w-4xl leading-[1.05]">
+          Let’s Build Something <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-brand to-brand">Iconic.</span>
+        </h2>
+      </div>
+
+      <!-- Main Footer Grid: Contact Form + Agency Details -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-20 border-b border-surface-light">
+        
+        <!-- Contact Form (Cols 1-7) -->
+        <div class="lg:col-span-7 glass-card p-8 sm:p-10 rounded-3xl">
+          <form id="contact-form" onsubmit="event.preventDefault(); document.getElementById('form-success').classList.remove('hidden');" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs uppercase tracking-wider font-mono text-muted mb-2">Your Name</label>
+                <input type="text" required placeholder="Alex Turner" class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm">
+              </div>
+              <div>
+                <label class="block text-xs uppercase tracking-wider font-mono text-muted mb-2">Email Address</label>
+                <input type="email" required placeholder="alex@company.com" class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs uppercase tracking-wider font-mono text-muted mb-2">Interested In</label>
+                <select class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm">
+                  <option class="bg-surface-light">Web Development & 3D</option>
+                  <option class="bg-surface-light">UI / UX Product Design</option>
+                  <option class="bg-surface-light">Full Digital Rebrand</option>
+                  <option class="bg-surface-light">Growth Optimization</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs uppercase tracking-wider font-mono text-muted mb-2">Expected Budget</label>
+                <select class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm">
+                  <option class="bg-surface-light">$10,000 – $25,000</option>
+                  <option class="bg-surface-light">$25,000 – $50,000</option>
+                  <option class="bg-surface-light">$50,000 – $100,000+</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs uppercase tracking-wider font-mono text-muted mb-2">Project Brief</label>
+              <textarea rows="4" placeholder="Tell us about your product goals, timeline, and aspirations..." class="w-full px-4 py-3.5 rounded-xl bg-surface-light border border-beige/10 text-black placeholder-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-4 rounded-xl bg-brand hover:bg-brand-glow text-black font-bold text-sm tracking-wide transition-all duration-300 shadow-xl shadow-brand/30 hover:scale-[1.01] active:scale-[0.99]">
+              Submit Inquiry →
+            </button>
+
+            <div id="form-success" class="hidden p-4 rounded-xl bg-brand/10 border border-brand/30 text-brand text-xs text-center font-mono">
+              Inquiry transmitted. Our directors will review and respond within 24 hours.
+            </div>
+          </form>
+        </div>
+
+        <!-- Agency Quick Info (Cols 8-12) -->
+        <div class="lg:col-span-5 flex flex-col justify-between space-y-8">
+          <div>
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand to-brand flex items-center justify-center font-bold text-black text-base shadow-md shadow-brand/40">
+                CC
+              </div>
+              <div>
+                <span class="font-extrabold text-xl tracking-tight text-black block">Code and Clix</span>
+                <span class="text-xs text-muted font-mono">Digital Product Agency</span>
+              </div>
+            </div>
+            
+            <p class="text-muted text-sm leading-relaxed mb-8">
+              We engineer bespoke digital flagship products, 3D interaction frameworks, and scalable web apps for brands unwilling to look like everyone else.
+            </p>
+
+            <div class="space-y-4 text-sm font-mono text-muted">
+              <div class="flex items-center gap-3">
+                <span class="text-brand">HQ:</span>
+                <span class="text-muted">San Francisco, CA & Remote Worldwide</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-brand">EMAIL:</span>
+                <a href="mailto:hello@codeandclix.com" class="text-muted hover:text-black transition-colors">hello@codeandclix.com</a>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-brand">CALL:</span>
+                <span class="text-muted">+1 (415) 890-CLIX</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agency Status Box -->
+          <div class="p-6 rounded-2xl bg-surface-light border border-beige/5">
+            <div class="flex items-center gap-2 mb-2 text-xs font-mono text-brand">
+              <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> CURRENT STATUS
+            </div>
+            <p class="text-xs text-muted leading-relaxed">
+              Accepting 2 new client partnerships for Q2/Q3 rollout. Inquire early to lock engineering sprint allocation.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Copyright Bottom Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-muted gap-4">
+        <div>© 2025 Code and Clix Agency. All rights reserved.</div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-muted transition-colors">Privacy</a>
+          <a href="#" class="hover:text-muted transition-colors">Terms of Work</a>
+          <a href="#" class="hover:text-muted transition-colors">Twitter / X</a>
+          <a href="#" class="hover:text-muted transition-colors">GitHub</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- APPLE SCROLL ENGINE SCRIPT                              -->
+  <!-- ======================================================== -->
+  <script>
+    (function() {
+      // Reference uploaded frames from DataStore Snapshot as guaranteed high-res fallback / keyframes
+      // Frames: 1, 40, 80, 120, 160, 192
+      const canvasKeyframes = {
+        0: "https://lh3.googleusercontent.com/aida-public/AB6AXuBPh4DHTmUddILVQiFzf2VPfF4YlVpR1HmtpMPQSYn7ufoeaTn_gEI1Jvt7EOEvwx1e1tkryVKvq7_3fGOEEXq3aeLl2aOqgZMlj61rwKhJ8BFpooamqgA4_ERsjTRbgNxeFAj2p1EF01u465fOWjIEUszTHsHzt6wZBfHMqXeXd4W9DkFH_nEwg-tcgVY_qXF_xIlahhaAoeMaftgMBmuZKBRNxvDBZLtHLEz7zGA1o7a4IVHnnsQYyK8MuObXYVF8Tw",   // frame 001
+        39: "https://lh3.googleusercontent.com/aida-public/AB6AXuB8xe4CloIdA-YQj7UJ6dN3PVL1EUHmORUJ8whhoxI5UOSlw2QUz_GSNXTRJnsDGeDyeCiQ09IumWnwuNvO5UOeTDyVQ-wcW-p67-5nxaO8cOpWL3Oo7jKGlutObTAaWWgTwhIGed5O3ACp-OOeAILeRZMlkKMxyd51MbUtqp_o2A7A037fB6HlallFIZVeKj1PfFR1cfgR3RckTTChUrudP-bFMdECoAqOvjl873LuzE3biF3Wja_VsJVOV9zYX59-yg",  // frame 040
+        79: "https://lh3.googleusercontent.com/aida-public/AB6AXuDy38Q3eax__d8i_OLkGJtEw2YDY75aDefnR2CYOenNxD9g2XD1JiJQa8jt0TF1HRHiCu-63WHTdL2MvzuMWNm4sneTWwERRc7zwRC4rigaH9qXub3Y6a8Fn5c18wt8w2bkK9OBbs7t1v-UsJ5_jU_b79DhZC7vWf57jGnb2y1nDex5WLkf8TEfLPbEEZdoRtJ8fKnxGbNVbNoiacl-E-iLlJXucXvrCBlSiA-JC3GQkOJrKI-s6r-UTaLnAurfhYRP-Q",  // frame 080
+        119: "https://lh3.googleusercontent.com/aida-public/AB6AXuAbXmQjLVsIhCF_WD_YW097nxH3kaVwJ-mFDRH2YkPuCSxRuKS2VdGjJsvmewSx5Ab-qzqQ5EmLHOAr5fEwKQSyB-8wwp0LSt8REAiK0MGh_5ypeDgnhenl1dnIrtw19qeC4LpcVK9AYNtJjuhT8fEYKVG0OU3_FWPGkWwVxtLqwRkBAF1YeR1yS7vrVNucHv9Duf2cYG31AcYhaHHEg78WkajcAsT64PMG2ncPZg7SM9lB3-2IevO3bYNBgyh8gvvyew", // frame 120
+        159: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMjgjdk0aZ7MzZjzJMCxID28Vs4kb4alqkQw8G55_OpB2nAHeqaHTtLfXNHGyzgG-hjm9KXjSiOHkx4YzFl9NS7AU9rq9CopIbU9Zi6DxNEeuN4jkemrrW-iVlwWgI6ayRxQWFUVZtj2Cl-mq8DyZCrq5wcQa7opXPTonSIl2sqHswmq1YLqQULkd9gE-8tr5EoEZaCBDsQGzUSytlP6AETfZW2kSUz-lvzGRCMe7PjZG8LA9PCbmkdI_FVrYdHUZq5w", // frame 160
+        191: "https://lh3.googleusercontent.com/aida-public/AB6AXuDyYCwuYle7thlYjpfmk7cEDmxGhKF9Wr2ICNGz5W86LGaBA8yML74vCHpB3MT9Ce8jwr-P3S3IikOkJOQOQwCq8KZNcgGNc7gqCRHMWzB2IAcB-Jsrp4EcABlbYlipPmISX3dLvkbH82ZUMzMt_f5PT5HRnlk8e7VRDuN0ZDCfzPqCJmyoAc5jhSORKmOEHp6Zp_2xCkkaAVcTaKRZ3Um-DQuvgr1UnVyzwDdejaWnzGk6GqyVb0hWx-xkHkL4p_yEwQ"  // frame 192
+      };
+
+      const TOTAL_FRAMES = 192;
+      const images = new Array(TOTAL_FRAMES);
+      let loadedImagesCount = 0;
+      let currentFrameIndex = 0;
+      let isRendering = false;
+
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      const heroContainer = document.getElementById('hero-container');
+      const heroSpacer = document.getElementById('hero-spacer');
+      const loaderOverlay = document.getElementById('loader-overlay');
+      const loaderPercentage = document.getElementById('loader-percentage');
+      const loaderProgressBar = document.getElementById('loader-progress-bar');
+      const frameCounter = document.getElementById('frame-counter');
+      const frameProgress = document.getElementById('frame-progress');
+      const scrollPrompt = document.getElementById('scroll-prompt');
+
+      // Typography blocks
+      const textBlock1 = document.getElementById('text-block-1');
+      const textBlock2 = document.getElementById('text-block-2');
+      const textBlock3 = document.getElementById('text-block-3');
+      const textBlock4 = document.getElementById('text-block-4');
+
+      // Helper to generate the exact frame path matching requirement
+      function getFrameSrc(index) {
+        // If a verified direct canvas keyframe asset exists at this slot, prioritize it
+        if (canvasKeyframes[index]) {
+          return canvasKeyframes[index];
+        }
+        // Requirement specified naming: ezgif-frame-001, 002...192
+        const frameNum = String(index + 1).padStart(3, '0');
+        return `/frames/ezgif-frame-${frameNum}.jpg`;
+      }
+
+      // Resize canvas with pixel ratio support for crisp high-density screens
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        drawFrame(currentFrameIndex);
+      }
+
+      // Draw frame centered with cover scale: Math.max(canvas.width/img.width, canvas.height/img.height)
+      function drawFrame(index) {
+        // Find best loaded frame (target, or closest available neighbor)
+        let img = images[index];
+        if (!img || !img.complete || img.naturalWidth === 0) {
+          // Fallback to nearest loaded keyframe
+          const keyIndices = [0, 39, 79, 119, 159, 191];
+          let bestIdx = 0;
+          let minDiff = 999;
+          for (let k of keyIndices) {
+            if (images[k] && images[k].complete && images[k].naturalWidth !== 0) {
+              const diff = Math.abs(k - index);
+              if (diff < minDiff) {
+                minDiff = diff;
+                bestIdx = k;
+              }
+            }
+          }
+          img = images[bestIdx];
+        }
+
+        if (!img || !img.complete || img.naturalWidth === 0) return;
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+
+        // Cover calculation
+        const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+        const nw = img.naturalWidth * scale;
+        const nh = img.naturalHeight * scale;
+        const ox = (w - nw) / 2;
+        const oy = (h - nh) / 2;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, ox, oy, nw, nh);
+      }
+
+      // Preload images with Promise.all and track percentage 0-100
+      function preloadFrames() {
+        const promises = [];
+
+        for (let i = 0; i < TOTAL_FRAMES; i++) {
+          const p = new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            
+            img.onload = () => {
+              images[i] = img;
+              loadedImagesCount++;
+              updateLoader();
+              resolve(img);
+            };
+
+            img.onerror = () => {
+              // Graceful fallback: If /frames/ folder is local to client server, fall back to closest keyframe
+              const fallbackKey = i < 20 ? 0 : i < 60 ? 39 : i < 100 ? 79 : i < 140 ? 119 : i < 180 ? 159 : 191;
+              if (canvasKeyframes[fallbackKey] && img.src !== canvasKeyframes[fallbackKey]) {
+                img.src = canvasKeyframes[fallbackKey];
+              } else {
+                loadedImagesCount++;
+                updateLoader();
+                resolve(null);
+              }
+            };
+
+            img.src = getFrameSrc(i);
+          });
+          promises.push(p);
+        }
+
+        function updateLoader() {
+          const percent = Math.min(100, Math.floor((loadedImagesCount / TOTAL_FRAMES) * 100));
+          if (loaderPercentage) loaderPercentage.textContent = `${percent}%`;
+          if (loaderProgressBar) loaderProgressBar.style.width = `${percent}%`;
+          
+          // Draw first frame as soon as frame 0 or any keyframe is ready
+          if (loadedImagesCount === 1) {
+            drawFrame(0);
+          }
+        }
+
+        Promise.all(promises).then(() => {
+          setTimeout(() => {
+            if (loaderOverlay) {
+              loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
+              setTimeout(() => { loaderOverlay.style.display = 'none'; }, 700);
+            }
+            drawFrame(0);
+          }, 300);
+        });
+
+        // Fail-safe timeout: hide loader after 2.5s even on slow simulated connections
+        setTimeout(() => {
+          if (loaderOverlay && !loaderOverlay.classList.contains('opacity-0')) {
+            loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => { loaderOverlay.style.display = 'none'; }, 700);
+            drawFrame(0);
+          }
+        }, 2500);
+      }
+
+      // Calculate opacity curve for text blocks (fades in, stays, fades out)
+      function calculateRangeOpacity(frame, start, end, fadeBuffer = 6) {
+        if (frame < start || frame > end) return 0;
+        if (frame < start + fadeBuffer) {
+          return (frame - start) / fadeBuffer;
+        }
+        if (frame > end - fadeBuffer) {
+          return (end - frame) / fadeBuffer;
+        }
+        return 1;
+      }
+
+      // Update frame on scroll using requestAnimationFrame for 60fps
+      function onScroll() {
+        if (isRendering) return;
+        isRendering = true;
+
+        requestAnimationFrame(() => {
+          const containerTop = heroContainer.offsetTop;
+          const containerHeight = heroSpacer.offsetHeight;
+          const scrollY = window.scrollY;
+
+          // Fraction across the 400vh scroll container
+          const scrollFraction = Math.max(0, Math.min(1, (scrollY - containerTop) / containerHeight));
+          
+          // frameIndex = Math.floor(scrollFraction * 191)
+          const frameIndex = Math.min(191, Math.floor(scrollFraction * 191));
+          currentFrameIndex = frameIndex;
+
+          drawFrame(frameIndex);
+
+          // Update UI frame indicators
+          if (frameCounter) frameCounter.textContent = String(frameIndex + 1).padStart(3, '0');
+          if (frameProgress) frameProgress.style.width = `${(frameIndex / 191) * 100}%`;
+          if (scrollPrompt) {
+            scrollPrompt.style.opacity = frameIndex > 10 ? '0' : '1';
+          }
+
+          // Requirement 1 Text opacity rules:
+          // frames 5-35: "We Build Digital Experiences" opacity 0->1->0
+          const op1 = calculateRangeOpacity(frameIndex, 5, 35, 6);
+          textBlock1.style.opacity = op1;
+          textBlock1.style.transform = `translateY(${(1 - op1) * 12}px) scale(${0.96 + op1 * 0.04})`;
+
+          // frames 50-80: "Code That Converts"
+          const op2 = calculateRangeOpacity(frameIndex, 50, 80, 6);
+          textBlock2.style.opacity = op2;
+          textBlock2.style.transform = `translateY(${(1 - op2) * 12}px) scale(${0.96 + op2 * 0.04})`;
+
+          // frames 100-130: "Clix That Click"
+          const op3 = calculateRangeOpacity(frameIndex, 100, 130, 6);
+          textBlock3.style.opacity = op3;
+          textBlock3.style.transform = `translateY(${(1 - op3) * 12}px) scale(${0.96 + op3 * 0.04})`;
+
+          // frames 160-191: Show CTA button "Start Your Project →" + fade out
+          const op4 = calculateRangeOpacity(frameIndex, 155, 191, 7);
+          textBlock4.style.opacity = op4;
+          textBlock4.style.transform = `translateY(${(1 - op4) * 16}px) scale(${0.95 + op4 * 0.05})`;
+
+          isRendering = false;
+        });
+      }
+
+      // Work Carousel scroll controls
+      const track = document.getElementById('carousel-track');
+      const prevBtn = document.getElementById('carousel-prev');
+      const nextBtn = document.getElementById('carousel-next');
+
+      if (prevBtn && nextBtn && track) {
+        prevBtn.addEventListener('click', () => {
+          track.scrollBy({ left: -420, behavior: 'smooth' });
+        });
+        nextBtn.addEventListener('click', () => {
+          track.scrollBy({ left: 420, behavior: 'smooth' });
+        });
+      }
+
+      // Event listeners
+      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Init sequence
+      resizeCanvas();
+      preloadFrames();
+      onScroll();
+    })();
+  </script>
+
+</body>
+</html>
